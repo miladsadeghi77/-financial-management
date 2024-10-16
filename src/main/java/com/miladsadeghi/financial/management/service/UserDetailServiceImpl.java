@@ -1,15 +1,19 @@
 package com.miladsadeghi.financial.management.service;
 
 import com.miladsadeghi.financial.management.entity.User;
-import com.miladsadeghi.financial.management.model.CustomUserDetails;
+import com.miladsadeghi.financial.management.entity.UserRole;
 import com.miladsadeghi.financial.management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -21,7 +25,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
 
-    public void registerNewUser(User user) {
+
+    public void registerUser(User user) {
         User userByUserName = userRepo.getByUsername(user.getUsername());
         if (userByUserName !=null) {
             throw new IllegalArgumentException("Username is Already");
@@ -52,10 +57,18 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new CustomUserDetails(user);
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
     }
+
 
     public List<User> findAll() {
         return userRepo.findAll();
+    }
+
+    private Set<GrantedAuthority> getAuthorities(Set<UserRole> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toSet());
     }
 }

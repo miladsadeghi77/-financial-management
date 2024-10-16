@@ -1,20 +1,20 @@
 package com.miladsadeghi.financial.management.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 
-@Getter
-@Setter
+@Data
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
-@Table(name = "roles")
+@Table(name = "role")
 public class UserRole {
 
     @Id
@@ -23,12 +23,4 @@ public class UserRole {
     private Long id;
 
     private String name;
-
-    public UserRole() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
 }
